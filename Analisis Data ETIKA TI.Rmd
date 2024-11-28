@@ -1,0 +1,156 @@
+---
+title: "Script Analisis Etika"
+author: "I Putu Febryan Khrisyantara_5026231116"
+date: "2024-11-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data <- read.csv("test.csv")
+data
+```
+
+```{r}
+library(dplyr)
+fakeReview <- data %>% select(Fake1, Fake2, Fake3, Fake4, Fake5)
+fakeReview
+```
+
+
+```{r}
+persepsiRisiko <- data %>% select(Perp1, Perp2, Perp3, Perp4, Perp5, Perp6)
+persepsiRisiko
+```
+
+
+```{r}
+minatBeli <- data %>% select(Minat1, Minat2, Minat3)
+minatBeli
+```
+
+
+##fakeReview Validitas
+```{r}
+dataTotalFake <- fakeReview %>%
+  mutate(total_col = rowSums(.,na.rm = TRUE))
+dataTotalFake
+```
+
+```{r}
+relation <- cor(dataTotalFake)
+data.frame(round(relation,3))
+```
+
+```{r}
+validitasFake <- function(variabel,jumlah,alpha) {
+ p <- ncol(variabel)
+ n <- nrow(variabel)
+ y <- matrix(,nrow=p,ncol=1)
+ for (i in 1:p) {
+ y[i,] <- cor(variabel[,i],jumlah) 
+ }
+ y <- as.data.frame(y)
+ rtabel <- qt(1-alpha/2,n-2)/sqrt((n-2)+(qt(1-alpha/2,n-2))^2)
+ rtabel <- as.data.frame(rep(rtabel,p))
+ hasil1 <- cbind(y,rtabel)
+ hasil2 <- ifelse(hasil1[,1]>=hasil1[,2],"Item Valid","Item Tidak 
+           Valid")
+ hasil <- cbind(hasil1,hasil2)
+ colnames(hasil) <- c("r hitung","r tabel","Hasil Uji")
+ print(hasil)
+}
+```
+
+```{r}
+validitasFake(dataTotalFake, dataTotalFake$total_col,0.05)
+```
+```{r}
+library(psych)
+KMO(fakeReview)
+```
+##persepsiRisiko Validitas
+```{r}
+dataTotalPerp <- persepsiRisiko %>%
+  mutate(total_col = rowSums(.,na.rm = TRUE))
+dataTotalPerp
+```
+```{r}
+relation <- cor(dataTotalPerp)
+data.frame(round(relation,3))
+```
+```{r}
+validitasPerp <- function(variabel,jumlah,alpha) {
+ p <- ncol(variabel)
+ n <- nrow(variabel)
+ y <- matrix(,nrow=p,ncol=1)
+ for (i in 1:p) {
+ y[i,] <- cor(variabel[,i],jumlah) 
+ }
+ y <- as.data.frame(y)
+ rtabel <- qt(1-alpha/2,n-2)/sqrt((n-2)+(qt(1-alpha/2,n-2))^2)
+ rtabel <- as.data.frame(rep(rtabel,p))
+ hasil1 <- cbind(y,rtabel)
+ hasil2 <- ifelse(hasil1[,1]>=hasil1[,2],"Item Valid","Item Tidak 
+           Valid")
+ hasil <- cbind(hasil1,hasil2)
+ colnames(hasil) <- c("r hitung","r tabel","Hasil Uji")
+ print(hasil)
+}
+```
+
+```{r}
+validitasPerp(dataTotalPerp, dataTotalPerp$total_col,0.05)
+```
+
+##Validitas minatBeli
+```{r}
+dataTotalMinat <- minatBeli%>%
+  mutate(total_col = rowSums(.,na.rm = TRUE))
+dataTotalMinat
+```
+
+```{r}
+validitasMinat <- function(variabel,jumlah,alpha) {
+ p <- ncol(variabel)
+ n <- nrow(variabel)
+ y <- matrix(,nrow=p,ncol=1)
+ for (i in 1:p) {
+ y[i,] <- cor(variabel[,i],jumlah) 
+ }
+ y <- as.data.frame(y)
+ rtabel <- qt(1-alpha/2,n-2)/sqrt((n-2)+(qt(1-alpha/2,n-2))^2)
+ rtabel <- as.data.frame(rep(rtabel,p))
+ hasil1 <- cbind(y,rtabel)
+ hasil2 <- ifelse(hasil1[,1]>=hasil1[,2],"Item Valid","Item Tidak 
+           Valid")
+ hasil <- cbind(hasil1,hasil2)
+ colnames(hasil) <- c("r hitung","r tabel","Hasil Uji")
+ print(hasil)
+}
+```
+
+```{r}
+validitasMinat(dataTotalMinat, dataTotalMinat$total_col,0.05)
+```
+
+##fakeReview Reliabilitas
+```{r}
+library(psych)
+alpha(fakeReview)
+```
+
+##Persepsi Risiko Reliabilitas
+```{r}
+library(psych)
+alpha(persepsiRisiko)
+```
+
+##Minat Beli Reliabilitas
+```{r}
+library(psych)
+alpha(minatBeli)
+```
